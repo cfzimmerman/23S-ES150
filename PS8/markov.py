@@ -2,23 +2,7 @@ from matrix_power import transition_matrix, InputMatrix
 from typing import TypedDict, NewType
 import numpy
 
-'''
-
-Generate the transition matrix for every t between 0 and 100,000
-
-Starting at t = 1, iterate to 100,000
-    For every time t
-    Determine where to transition to next
-    Log the next transition destination
-    Log the transition edge taken
-    Follow the transition
-
-Determine where to transition to next
-
-
-'''
-
-NUM_STEPS: int = 200
+NUM_STEPS: int = 100000
 
 initial_state: InputMatrix = transition_matrix
 
@@ -31,12 +15,88 @@ MoveState = NewType("MoveState", int)
 class GraphWalkStats(TypedDict):
     target_state_visits: int
     target_edge_visits: int
+    history: list[int]
 
 
 def choose_next(options: list[MoveState], probabilities: list[float]) -> MoveState:
     # Given a list of moves and their probabilities, chooses a move
     assert (len(options) == len(probabilities))
     return numpy.random.choice(len(options), p=probabilities)
+
+
+def get_possible_states(base: InputMatrix) -> list[MoveState]:
+    # Possible states are the index number of each row in a graph.
+    return list(range(len(base)))
+
+
+def walk_graph(
+    start_state: MoveState,
+    max_steps: int,
+    target_state: int,
+    target_edge: tuple[int, int],
+    transition_matrix: InputMatrix,
+    possible_states: list[MoveState]
+) -> GraphWalkStats:
+    history: list[int] = []
+    current_state: MoveState = start_state
+    target_state_count: int = 0
+    target_edge_count: int = 0
+    for num in range(max_steps):
+        history.append(current_state)
+        # print("\ncurrent state: ", current_state)
+        next_move: MoveState = choose_next(
+            options=possible_states, probabilities=transition_matrix[current_state])
+
+        if next_move == target_state:
+            target_state_count += 1
+        if (current_state == target_edge[0] and next_move == target_edge[1]):
+            target_edge_count += 1
+        current_state = next_move
+        # print("next move: ", current_state)
+        # print("history: ", history)
+    return GraphWalkStats(
+        target_state_visits=target_state_count,
+        target_edge_visits=target_edge_count,
+        history=history
+    )
+
+
+def run():
+    possible_states = get_possible_states(base=initial_state)
+    results: GraphWalkStats = walk_graph(
+        start_state=0,
+        max_steps=NUM_STEPS,
+        target_state=1,
+        target_edge=(1, 2),
+        transition_matrix=initial_state,
+        possible_states=possible_states
+    )
+    print("# State 1 Visits: ", results["target_state_visits"])
+    print("# Edge 1-2 Visits: ", results["target_edge_visits"])
+
+    num_ones = 0
+    for index, num in enumerate(results["history"]):
+        if num == 1:
+            num_ones += 1
+
+
+run()
+
+'''
+
+Output for n = 100,000 
+
+# State 1 Visits:  38382
+# Edge 1-2 Visits:  6408
+
+pi_100000 = 38437 / 100,000 = 0.38437
+
+'''
+
+
+''' 
+
+Anger mode - Python doesn't support tail recursion and thus denies my elegant solution. Implementing an ugly brute force algorithm instead.
 
 
 def get_transition_powers(start: int, stop: int, base: InputMatrix, accumulator: InputMatrix, results: TransitionList) -> TransitionList:
@@ -56,11 +116,12 @@ def get_transition_powers(start: int, stop: int, base: InputMatrix, accumulator:
     new_results = results + [new_accumulator]
     return get_transition_powers(start=start + 1, stop=stop, base=base, accumulator=new_accumulator, results=new_results)
 
+'''
 
-def get_possible_states(base: InputMatrix) -> list[MoveState]:
-    # Possible states are the index number of each row in a graph.
-    return list(range(len(base)))
 
+'''
+
+Again, the elegant, efficient tail-recursive solution apparently isn't supported by Python. 
 
 def walk_graph(
     current_state: MoveState,
@@ -100,24 +161,4 @@ def walk_graph(
         possible_states=possible_states
     )
 
-
-def run():
-    transitions = get_transition_powers(
-        start=0, stop=NUM_STEPS, base=initial_state, accumulator=initial_state, results=[])
-    possible_states = get_possible_states(base=initial_state)
-    results: GraphWalkStats = walk_graph(
-        current_state=0,
-        current_step=0,
-        max_step=NUM_STEPS,
-        target_state=1,
-        st_ct=0,
-        target_edge=(1, 2),
-        ed_ct=0,
-        transitions=transitions,
-        possible_states=possible_states
-    )
-    print("# State 1 Visits: ", results["target_state_visits"])
-    print("# Edge 1-2 Visits: ", results["target_edge_visits"])
-
-
-run()
+ '''
