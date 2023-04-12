@@ -1,9 +1,10 @@
 from numpy import linalg
 from typing import NewType
 
-IntMatrix = NewType("IntMatrix", list[list[int]])
+InputMatrix = NewType("IntMatrix", list[list[float]])
 
-transition_matrix: IntMatrix = \
+
+transition_matrix: InputMatrix = \
     [
         [0.4, 0.6, 0],
         [0.4, 0.3, 0.3],
@@ -11,13 +12,13 @@ transition_matrix: IntMatrix = \
     ]
 
 
-def print_matrix_pow(mx: IntMatrix, pow: int) -> None:
+def print_matrix_pow(mx: InputMatrix, pow: int) -> None:
     ''' Prints a matrix raised to a power '''
     print(f"\nP^{pow}")
     print(linalg.matrix_power(mx, pow))
 
 
-def main():
+def run():
     print(f"\nFor P = {transition_matrix}")
 
     powers = [2, 4, 8, 16, 32, 64]
@@ -26,7 +27,7 @@ def main():
         print_matrix_pow(transition_matrix, pw)
 
 
-main()
+# run()
 
 '''
 
