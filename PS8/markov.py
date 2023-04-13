@@ -2,8 +2,6 @@ from matrix_power import transition_matrix, InputMatrix
 from typing import TypedDict, NewType
 import numpy
 
-NUM_STEPS: int = 100000
-
 initial_state: InputMatrix = transition_matrix
 
 TransitionList = NewType("TransitionList", list[InputMatrix])
@@ -37,23 +35,27 @@ def walk_graph(
     transition_matrix: InputMatrix,
     possible_states: list[MoveState]
 ) -> GraphWalkStats:
+
     history: list[int] = []
     current_state: MoveState = start_state
     target_state_count: int = 0
     target_edge_count: int = 0
+
     for num in range(max_steps):
+
         history.append(current_state)
-        # print("\ncurrent state: ", current_state)
+
         next_move: MoveState = choose_next(
             options=possible_states, probabilities=transition_matrix[current_state])
 
         if next_move == target_state:
             target_state_count += 1
+
         if (current_state == target_edge[0] and next_move == target_edge[1]):
             target_edge_count += 1
+
         current_state = next_move
-        # print("next move: ", current_state)
-        # print("history: ", history)
+
     return GraphWalkStats(
         target_state_visits=target_state_count,
         target_edge_visits=target_edge_count,
@@ -62,6 +64,7 @@ def walk_graph(
 
 
 def run():
+    NUM_STEPS: int = 100000
     possible_states = get_possible_states(base=initial_state)
     results: GraphWalkStats = walk_graph(
         start_state=0,
@@ -74,22 +77,18 @@ def run():
     print("# State 1 Visits: ", results["target_state_visits"])
     print("# Edge 1-2 Visits: ", results["target_edge_visits"])
 
-    num_ones = 0
-    for index, num in enumerate(results["history"]):
-        if num == 1:
-            num_ones += 1
 
-
-run()
+# run()
 
 '''
 
 Output for n = 100,000 
 
-# State 1 Visits:  38382
-# Edge 1-2 Visits:  6408
+# State 1 Visits:  38497
+# Edge 1-2 Visits:  11608
 
-pi_100000 = 38437 / 100,000 = 0.38437
+pi_100000 = 38,437 / 100,000 = 0.38497
+edge_100000 = 11,608 / 100,000 = 0.11608
 
 '''
 
