@@ -43,9 +43,9 @@ P^512
 
 '''
 
-''' 
 
 def run():
+    # This was just for verifying the correctness of the approach above.
     NUM_STEPS = 1000000
     possible_states = get_possible_states(base=transition_matrix)
     results: GraphWalkStats = walk_graph(
@@ -58,6 +58,8 @@ def run():
     )
     print("frequency of 0: ", results["target_state_visits"] / NUM_STEPS)
 
+
+'''
 
 run()
 
