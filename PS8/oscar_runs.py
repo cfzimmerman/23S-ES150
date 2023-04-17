@@ -1,5 +1,4 @@
-from matrix_power import InputMatrix, print_matrix_pow
-from markov import walk_graph, GraphWalkStats, get_possible_states
+from Markov import InputMatrix, Markov, GraphWalkStats
 
 '''
 
@@ -47,8 +46,8 @@ P^512
 def run():
     # This was just for verifying the correctness of the approach above.
     NUM_STEPS = 1000000
-    possible_states = get_possible_states(base=transition_matrix)
-    results: GraphWalkStats = walk_graph(
+    possible_states = Markov.get_possible_states(base=transition_matrix)
+    results: GraphWalkStats = Markov.walk_graph(
         start_state=0,
         max_steps=NUM_STEPS,
         target_state=0,
@@ -60,7 +59,6 @@ def run():
 
 
 '''
-
 run()
 
 result:

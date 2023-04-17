@@ -1,7 +1,4 @@
-from numpy import linalg
-from typing import NewType
-
-InputMatrix = NewType("IntMatrix", list[list[float]])
+from Markov import InputMatrix, Markov
 
 
 transition_matrix: InputMatrix = \
@@ -12,19 +9,11 @@ transition_matrix: InputMatrix = \
     ]
 
 
-def print_matrix_pow(mx: InputMatrix, pow: int) -> None:
-    ''' Prints a matrix raised to a power '''
-    print(f"\nP^{pow}")
-    print(linalg.matrix_power(mx, pow))
-
-
 def run():
     print(f"\nFor P = {transition_matrix}")
-
     powers = [2, 4, 8, 16, 32, 64]
-
     for pw in powers:
-        print_matrix_pow(transition_matrix, pw)
+        Markov.print_matrix_pow(transition_matrix, pw)
 
 
 # run()
